@@ -1,2 +1,0 @@
-select ceil(avg(salary) - avg(replace(Salary, '0', '')))
-from employees
