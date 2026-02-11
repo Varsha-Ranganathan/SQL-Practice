@@ -1,0 +1,4 @@
+SELECT DISTINCT CITY
+FROM STATION
+WHERE CITY  RLIKE '^[AEIOUaeiou]'  -- start with a vowel
+  AND CITY  RLIKE '[AEIOUaeiou]$'  -- end with a vowel
