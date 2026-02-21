@@ -1,0 +1,30 @@
+with page_loads as (
+select user_id,
+        DATE(timestamp) AS session_date,
+        timestamp AS load_time,
+        ROW_NUMBER() over (partition by user_id, DATE(timestamp) order by timestamp DESC) as rn
+from facebook_web_log
+where action = "page_load"
+), 
+page_exits as (
+select user_id,
+        DATE(timestamp) AS session_date,
+        timestamp AS exit_time,
+        ROW_NUMBER() over (partition by user_id, DATE(timestamp) order by timestamp ASC) as rn
+from facebook_web_log
+where action = "page_exit"
+)
+
+SELECT
+    l.user_id,
+    AVG(TIMESTAMPDIFF(SECOND, l.load_time, e.exit_time)) AS avg_session_time
+FROM page_loads l
+JOIN page_exits e
+    ON l.user_id = e.user_id
+   AND l.session_date = e.session_date
+WHERE l.rn = 1
+  AND e.rn = 1
+  AND l.load_time < e.exit_time
+GROUP BY l.user_id;
+
+
