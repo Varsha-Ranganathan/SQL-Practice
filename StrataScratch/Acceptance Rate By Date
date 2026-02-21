@@ -1,0 +1,35 @@
+WITH sent AS (
+  SELECT
+    user_id_sender,
+    user_id_receiver,
+    date AS sent_date
+  FROM fb_friend_requests
+  WHERE action = 'sent'
+),
+accepted AS (
+  SELECT
+    user_id_sender,
+    user_id_receiver,
+    date AS accepted_date
+  FROM fb_friend_requests
+  WHERE action = 'accepted'
+),
+joined AS (
+  SELECT
+    s.sent_date,
+    CASE
+      WHEN a.accepted_date IS NOT NULL AND a.accepted_date >= s.sent_date THEN 1
+      ELSE 0
+    END AS accepted_flag
+  FROM sent s
+  LEFT JOIN accepted a
+    ON s.user_id_sender = a.user_id_sender
+   AND s.user_id_receiver = a.user_id_receiver
+)
+
+SELECT
+  sent_date AS date,
+  AVG(accepted_flag) AS acceptance_rate
+FROM joined
+GROUP BY sent_date
+HAVING SUM(accepted_flag) > 0;
