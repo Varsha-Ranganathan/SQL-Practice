@@ -1,0 +1,14 @@
+SELECT
+    ABS(
+        MAX(CASE WHEN department = 'engineering' THEN max_salary END)
+        - MAX(CASE WHEN department = 'marketing' THEN max_salary END)
+    ) AS salary_difference
+FROM (
+    SELECT
+        department,
+        MAX(salary) AS max_salary
+    FROM db_employee AS e
+    INNER JOIN db_dept AS d ON e.department_id = d.id
+    WHERE department IN ('engineering', 'marketing')
+    GROUP BY department_id
+) AS t
