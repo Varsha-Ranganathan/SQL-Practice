@@ -1,0 +1,19 @@
+with apple_users as (
+select language, count(distinct u.user_id) as n_apple_users
+from playbook_events e
+join playbook_users u on e.user_id = u.user_id
+where device in ("macbook pro", "iphone 5s", "ipad air" )
+group by language),
+
+total_users as (
+select language, count(distinct u.user_id) as n_total_users
+from playbook_events e
+join playbook_users u on e.user_id = u.user_id
+group by language
+)
+
+select t.language, COALESCE(a.n_apple_users, 0) AS n_apple_users, n_total_users
+from apple_users as a
+right join total_users t on a.language = t.language
+order by n_total_users DESC
+
