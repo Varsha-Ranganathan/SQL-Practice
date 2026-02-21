@@ -1,0 +1,8 @@
+with avg_sal_cte as (
+select department, avg(salary) as avg_salary
+from employee
+group by department)
+
+select e.department, first_name, salary, avg_salary
+from  employee e
+join avg_sal_cte a on e.department = a.department
