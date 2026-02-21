@@ -1,0 +1,4 @@
+select 
+(count(CASE WHEN country = 'USA' && status = 'open' THEN 1 END)/ count(user_id) )*100
+from fb_active_users
+
