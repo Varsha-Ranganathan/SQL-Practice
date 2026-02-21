@@ -1,0 +1,22 @@
+WITH ranked AS (
+    SELECT
+        user_id,
+        created_at,
+        ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at) AS rn
+    FROM amazon_transactions
+),
+first_second AS (
+    SELECT
+        user_id,
+        MAX(CASE WHEN rn = 1 THEN created_at END) AS first_created_at,
+        MAX(CASE WHEN rn = 2 THEN created_at END) AS second_created_at
+    FROM ranked
+    GROUP BY user_id
+)
+SELECT user_id
+FROM first_second
+WHERE second_created_at IS NOT NULL
+  AND second_created_at BETWEEN
+        DATE_ADD(first_created_at, INTERVAL 1 DAY)
+    AND DATE_ADD(first_created_at, INTERVAL 7 DAY)
+ORDER BY user_id;
