@@ -1,0 +1,9 @@
+with cte as
+(select * ,
+ROW_NUMBER() over (partition by first_name, last_name order by salary DESC) as rn
+from ms_employee_salary)
+
+select id, first_name,	last_name,	department_id , salary
+from cte
+where rn = 1
+
