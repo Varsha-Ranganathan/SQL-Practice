@@ -1,0 +1,12 @@
+WITH launches AS (
+    SELECT
+        company_name,
+        year
+    FROM car_launches
+)
+
+SELECT
+    company_name,
+    COUNT(CASE WHEN year = 2020 THEN 1 END) - COUNT(CASE WHEN year = 2019 THEN 1 END) AS total_launch
+FROM launches
+GROUP BY company_name;
