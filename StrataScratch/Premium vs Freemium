@@ -1,0 +1,11 @@
+select date, 
+SUM(case when paying_customer = "no" THEN d.downloads END) as non_paying,
+SUM(case when paying_customer = "yes" THEN d.downloads END) as paying
+from ms_user_dimension u
+join ms_acc_dimension a on u.acc_id = a.acc_id
+join ms_download_facts d on u.user_id = d.user_id
+group by date
+having non_paying > paying
+order by date
+
+
