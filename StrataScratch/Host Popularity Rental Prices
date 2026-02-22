@@ -1,0 +1,13 @@
+WITH popularity_rating as (
+select price, (case
+        when number_of_reviews = 0 then "New"
+        when number_of_reviews BETWEEN 1 AND 5 then "Rising"
+        when number_of_reviews BETWEEN 6 AND 15 then "Trending Up"
+        when number_of_reviews BETWEEN 16 AND 40 then "Popular"
+        when number_of_reviews > 40 then "Hot" END) as host_popularity_rating
+from airbnb_host_searches
+)
+
+select host_popularity_rating, min(price), avg(price), max(price)
+from popularity_rating
+group by host_popularity_rating
