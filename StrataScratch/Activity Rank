@@ -1,0 +1,6 @@
+select from_user as user_id,
+    count(*) as total_emails,
+    row_number() over(order by count(*) desc, from_user ASC) as activity_rank
+from google_gmail_emails
+group by from_user
+order by activity_rank
