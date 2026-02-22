@@ -1,0 +1,5 @@
+select games, count(distinct id) as athletes_count
+from olympics_athletes_events
+group by year, season
+order by athletes_count DESC
+LIMIT 1
