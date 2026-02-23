@@ -1,0 +1,5 @@
+select 
+count(CASE WHEN status = 'closed' THEN acc_id END)/
+count(CASE WHEN (status = 'open' OR status = 'closed') THEN acc_id END) as closed_ratio
+from fb_account_status
+where YEAR(status_date) = 2020 && MONTH(status_date) = 1 && DAY(status_date) = 10
