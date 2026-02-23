@@ -1,0 +1,14 @@
+WITH ordered_txns AS (
+    SELECT
+        user_id,
+        created_at,
+        LAG(created_at) OVER (
+            PARTITION BY user_id
+            ORDER BY created_at
+        ) AS prev_created_at
+    FROM amazon_transactions
+)
+SELECT DISTINCT user_id
+FROM ordered_txns
+WHERE prev_created_at IS NOT NULL
+  AND DATEDIFF(created_at, prev_created_at) BETWEEN 1 AND 7
